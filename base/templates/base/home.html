@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+
+
+{% block content %}
+
+<h1>this is a home page fromm template base</h1>
+<hr>
+
+<h2>rooms available for study!</h2>
+
+<div>
+    {% for room in rooms %}
+        <div>
+            <h3>{{room.id}} --- <a href="room/{{room.id}}">{{room.name}}</a> </h3>
+        </div>
+    
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}
