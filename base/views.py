@@ -31,9 +31,32 @@ def create_room(request):
         if form.is_valid():
             # work with the data
             form.save()
+            # save to db
+
+            # redirect to the home page after send 
+            return redirect('/')
     else:
         form = FormRoom()
     
     return render(request,'base/room_form.html',{'form':form})
+
+
+# update a room view form 
+def update_room(request,pk):
+    # pk = room that we will update 
+    room = Room.objects.get(id = pk)
+
+    if request.method == 'POST':
+        form = FormRoom(request.POST, instance=room)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        # get a instance of the form from the room to update.
+        form = FormRoom(instance=room)      
+
+    return render(request,'base/room_form.html',{'form':form})
+
+            
 
 
