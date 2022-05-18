@@ -28,11 +28,15 @@ def home(request):
         Q(host__username__contains = q)
 
     )
-    print(rooms)
     topics = Topic.objects.all()
+
+    # get many rooms available from last query instance(room)
+    room_count = rooms.count() 
+
     context = {
         'rooms': rooms,
-        'topics': topics
+        'topics': topics,
+        'room_count': room_count
     }
     return render(request,'base/home.html',context)
 
