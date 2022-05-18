@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, render
+from django.db.models import Q
 # Create your views here.
 from .models import Room, Topic
 from .forms import FormRoom
+
 
 # example of rnder python list
 
@@ -16,9 +18,17 @@ rooms = [
 def home(request):
 
     # get the query parameter from the url 
-    q = request.GET.get('q')
+    # Q allos to make custom queryies with 'and' or 'or'
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains = q) | 
+        Q(name__contains = q) | 
+        Q(description__icontains = q) |
+        Q(host__username__contains = q)
 
-    rooms = Room.objects.all()
+    )
+    print(rooms)
     topics = Topic.objects.all()
     context = {
         'rooms': rooms,
