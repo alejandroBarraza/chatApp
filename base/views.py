@@ -1,19 +1,54 @@
 from django.shortcuts import redirect, render
+from django.contrib import messages
 from django.db.models import Q
 # Create your views here.
 from .models import Room, Topic
 from .forms import FormRoom
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 
 
 # example of rnder python list
 
-rooms = [
-    {"name":"math","id":2},
-    {"name":"science","id":5},
-    {"name":"japanese","id":8},
-]
+# rooms = [
+#     {"name":"math","id":2},
+#     {"name":"science","id":5},
+#     {"name":"japanese","id":8},
+# ]
+
+def loginPage(request):
+    
+    # get the values after submit the form.
+    # username and password
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # check if user exist, if not , return a message " user does not exist "
+        try:
+            user = User.objects.get(username = username)
+
+        except:
+            messages.error(request, "User does not exist")
+        
+        # if user exist , veryfried credentials
+
+        user = authenticate(request, username = username, password = password)
+
+        if user:
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request , "Username or Password does not exist" )
 
 
+    
+    context = {}
+    return render(request,'base/login_page.html',context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
 
 def home(request):
 
