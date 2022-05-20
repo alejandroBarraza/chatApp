@@ -1,11 +1,13 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 from .models import Room, Topic
 from .forms import FormRoom
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
 
 
 # example of rnder python list
@@ -17,7 +19,14 @@ from django.contrib.auth import authenticate, login, logout
 # ]
 
 def loginPage(request):
-    
+
+    """
+    if use is already been login in, redirect to home page/ 
+    """
+    if request.user.is_authenticated:
+        return redirect('home')
+
+
     # get the values after submit the form.
     # username and password
     if request.method == 'POST':
@@ -30,6 +39,9 @@ def loginPage(request):
 
         except:
             messages.error(request, "User does not exist")
+            return redirect('login')
+        
+        
         
         # if user exist , veryfried credentials
 
@@ -37,6 +49,8 @@ def loginPage(request):
 
         if user:
             login(request, user)
+            print(request.POST)
+            print("hola",request.user)
             return redirect('home')
         else:
             messages.error(request , "Username or Password does not exist" )
@@ -80,6 +94,7 @@ def room(request,id):
     context = { 'room':room }
     return render(request,'base/room.html', context)
 
+@login_required(login_url='login')
 def create_room(request):
 
     # if a post request with the data from the form.
@@ -99,6 +114,7 @@ def create_room(request):
 
 
 # update a room view form 
+@login_required(login_url='login')
 def update_room(request,pk):
     # pk = room that we will update 
     room = Room.objects.get(id = pk)
@@ -114,6 +130,7 @@ def update_room(request,pk):
 
     return render(request,'base/room_form.html',{'form':form})
 
+@login_required(login_url='login')
 def delete_room(request,pk):
     # pk = room we have to delete 
     room  = Room.objects.get(id = pk)
