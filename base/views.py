@@ -2,23 +2,40 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+from django.contrib.auth.models import User
 from .models import Room, Topic
 from .forms import FormRoom
-from django.contrib.auth.models import User
 
+def register_page(request):
+    
 
-# example of rnder python list
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            # get the user before save for update fields(lowerCase).
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            login(request,user)
+            messages.success(request,'Account created successfully')
+            return redirect('home')
+            """
+                NO need it for check if user already exist, Django handdle it in User Model
+                with error : " A user with that username already exists "
+            """
+    
+    else:
+        form = UserCreationForm()
 
-# rooms = [
-#     {"name":"math","id":2},
-#     {"name":"science","id":5},
-#     {"name":"japanese","id":8},
-# ]
+    context = { "form": form}
+    return render(request,'base/login_page.html',context)
 
 def loginPage(request):
+    page = 'login'
 
     """
     if use is already been login in, redirect to home page/ 
@@ -30,7 +47,7 @@ def loginPage(request):
     # get the values after submit the form.
     # username and password
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
         # check if user exist, if not , return a message " user does not exist "
@@ -50,14 +67,13 @@ def loginPage(request):
         if user:
             login(request, user)
             print(request.POST)
-            print("hola",request.user)
             return redirect('home')
         else:
             messages.error(request , "Username or Password does not exist" )
 
 
     
-    context = {}
+    context = { "page" : page}
     return render(request,'base/login_page.html',context)
 
 def logoutUser(request):
