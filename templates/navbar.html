@@ -8,6 +8,7 @@
         <input type="text" placeholder="Search Room.." name="q">
     </form>
     {% if request.user.is_authenticated %}
+    <small>Hello {{request.user}}</small>
     <button>
         <a href="{% url 'logout' %}">Logout </a>
     </button>
