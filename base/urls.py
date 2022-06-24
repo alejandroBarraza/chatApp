@@ -21,4 +21,7 @@ urlpatterns = [
     path('delete-room/<str:pk>/', views.delete_room, name = 'delete-room')
 
 
+    #Message url
+
+
 ]

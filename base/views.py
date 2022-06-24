@@ -7,12 +7,11 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 from django.contrib.auth.models import User
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import FormRoom
 
 def register_page(request):
     
-
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -107,7 +106,22 @@ def home(request):
 
 def room(request,id):
     room = Room.objects.get(id = id)
-    context = { 'room':room }
+    #-(crated) newest will be first.
+    messages = room.message_set.all().order_by('-created')
+
+    # if user write a new messge.
+    if request.method == 'POST':
+        Message.objects.create(
+            user=request.user,
+            room=room,
+            body = request.POST.get('body')
+        )
+        return redirect('room', id = room.id)
+
+    context = { 
+        'room':room,
+        'messages': messages 
+     }
     return render(request,'base/room.html', context)
 
 @login_required(login_url='login')
