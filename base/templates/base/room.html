@@ -1,10 +1,67 @@
-<h2>this is room html file</h2>
-
-
-<div>
-    <h3> thanks for comming to this room!</h3>
+<style>
+    .room-container{
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+    }
+</style>
+    
+<div class="room-container">
     <div>
-        <h4>{{room.name}} -- {{room.id}}</h4>
-        <button><a href="/">Return</a></button>
+        <div class="title-wrappper">
+            <h1>Study Room</h1>
+            <h2>{{room.name}}</h2>
+            <small>hosted by  @{{room.host}}</small>
+            <small>{{room.created|timesince}} ago</small>
+            <p>
+                {{room.description}}
+            </p>
+            <small>{{room.topic.name}}</small>
+            <button><a href="/">Return</a></button>
+        </div>
+
+        <div class="commment-wrapper">
+            <h3>
+                conversation
+            </h3>
+            <div class="conversation-wrapper">
+                {% for message in messages %}
+                <div>
+                    <small>
+                        @{{message.user}} {{message.created|timesince}} ago
+                    </small>
+                    <p>{{message.body}}</p>
+
+                    {% if request.user == message.user %}
+                    <div>
+                        <form method="POST" actions="">
+                            {% csrf_token %}
+                            <button>
+                            <a href="">Delete Message</a>
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <hr>
+                {% endfor %}     
+                </div>
+            </div>
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <div class="comment-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="body" id="body">
+            </form>
+        </div>
+        {% endif %}
     </div>
+    
+    <div class="participants-container">
+        <div class="participants-wrapper">
+            <h3>participanes</h3>
+            <hr>
+        </div>
+    </div>
+
 </div>
