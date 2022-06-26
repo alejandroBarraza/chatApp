@@ -97,18 +97,25 @@ def home(request):
     # get many rooms available from last query instance(room)
     room_count = rooms.count() 
 
+
+    #get activity feed.
+    activity_feed = Message.objects.all().order_by('-created')[:5]
+    print(activity_feed)
+
+
     context = {
         'rooms': rooms,
         'topics': topics,
-        'room_count': room_count
+        'room_count': room_count,
+        'activity_feed': activity_feed 
     }
     return render(request,'base/home.html',context)
 
 def room(request,id):
     room = Room.objects.get(id = id)
     #-(crated) newest will be first.
-    messages = room.message_set.all().order_by('-created')
-
+    room_messages = room.message_set.all().order_by('-created')
+    room_participants = room.participants.all()
     # if user write a new messge.
     if request.method == 'POST':
         Message.objects.create(
@@ -116,11 +123,16 @@ def room(request,id):
             room=room,
             body = request.POST.get('body')
         )
+        # if user send a message to a room that is not joined,add it.
+        room.participants.add(request.user)
+        
+        
         return redirect('room', id = room.id)
 
     context = { 
         'room':room,
-        'messages': messages 
+        'room_messages': room_messages,
+        'room_participants':room_participants
      }
     return render(request,'base/room.html', context)
 
@@ -170,6 +182,21 @@ def delete_room(request,pk):
     else:
         return render(request,'base/room_delete.html', {'obj': room} )
 
-            
+
+
+# messages 
+def delete_message(request,pk):
+
+    message = Message.objects.get(id = pk)
+    if request.method == 'POST':
+        message.delete()
+        return redirect('home')
+
+    else:
+        return render(request,'base/room_delete.html', {'obj': message} ) 
+    
+
+
+
 
 
