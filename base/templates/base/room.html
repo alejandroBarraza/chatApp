@@ -1,49 +1,47 @@
+{% extends 'main.html' %}
+
+{% block content %}
 <style>
     .room-container{
         display: grid;
         grid-template-columns: 3fr 1fr;
     }
 </style>
-    
+
+
 <div class="room-container">
     <div>
-        <div class="title-wrappper">
-            <h1>Study Room</h1>
-            <h2>{{room.name}}</h2>
-            <small>hosted by  @{{room.host}}</small>
-            <small>{{room.created|timesince}} ago</small>
-            <p>
-                {{room.description}}
-            </p>
-            <small>{{room.topic.name}}</small>
-            <button><a href="/">Return</a></button>
-        </div>
+        <h2>{{room.name}}</h2>
+        <small>{{room.description}}</small>
+        <button><a href="/">Return</a></button>
 
-        <div class="commment-wrapper">
+    
+        
+        <div class="conversation-wrapper">
             <h3>
                 conversation
-            </h3>
-            <div class="conversation-wrapper">
-                {% for message in messages %}
-                <div>
-                    <small>
-                        @{{message.user}} {{message.created|timesince}} ago
-                    </small>
-                    <p>{{message.body}}</p>
+                </h3>
+                <hr>
 
-                    {% if request.user == message.user %}
-                    <div>
-                        <form method="POST" actions="">
-                            {% csrf_token %}
-                            <button>
-                            <a href="">Delete Message</a>
-                            </button>
-                        </form>
-                    </div>
-                    {% endif %}
-                    <hr>
-                {% endfor %}     
+            {% for message in room_messages %}
+            <div>
+                <small>
+                    @{{message.user}} {{message.created|timesince}} ago
+                </small>
+                <p>{{message.body}}</p>
+
+                {% if request.user == message.user %}
+                <div class="comment-form">
+                    <form method="POST" actions="">
+                        {% csrf_token %}
+                        <button>
+                        <a href="{% url 'delete-message' message.id %}">Delete Message</a>
+                        </button>
+                    </form>
                 </div>
+                {% endif %}
+                <hr>
+            {% endfor %}     
             </div>
         </div>
 
@@ -51,17 +49,23 @@
         <div class="comment-form">
             <form method="POST" action="">
                 {% csrf_token %}
-                <input type="text" name="body" id="body">
+                <input type="text" name="body" id="body" placeholder="Write your message">
             </form>
         </div>
         {% endif %}
     </div>
-    
-    <div class="participants-container">
-        <div class="participants-wrapper">
-            <h3>participanes</h3>
-            <hr>
-        </div>
-    </div>
 
-</div>
+
+    <div class="participants-container">
+        <h3>participanes</h3>
+        {% for partcipant in room_participants %}
+        <div>
+            <small>@{{partcipant}}</small>
+        </div>
+        {% endfor %}
+    <hr>
+  
+
+<div/>
+
+{% endblock content %}
