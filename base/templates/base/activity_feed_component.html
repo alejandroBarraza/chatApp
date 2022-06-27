@@ -1,0 +1,23 @@
+<h2>Recent activities</h2>
+{% for act in activity_feed  %}
+<div class="activity-user">
+    <small>{{act.created|timesince}}</small>
+    <br>
+    <a href="{% url 'profile' act.user.id %}">@{{act.user}}</a>
+    <p>replied to post "{{act.room}}"</p>
+    <br>
+    <p>{{act.body}}</p>
+    {% if request.user == act.user %}
+    <div class="comment-form">
+        <form method="POST" actions="">
+            {% csrf_token %}
+            <button>
+                <a href="{% url 'delete-message' act.id %}">Delete</a>
+            </button>
+        </form>
+    </div>
+    <hr>
+    {% endif %}
+
+</div>
+{% endfor %}
