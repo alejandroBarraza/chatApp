@@ -13,24 +13,8 @@
 <div class="home-container">
 
     <div>
-        <h3>
-            Browse topics
-
-        </h3>
-        <hr>
-
-        <div>
-            <a href="{% url 'home' %}">All</a>
-            <hr>
-            {% for topic in topics %}
-            <div>
-                <a href="{% url 'home' %}?q={{topic.name}}" >{{topic.name}}</a>
-                <hr>
-            </div>
-            {% endfor %}
-        </div>
+        {% include 'base/topics_container.html' %}
     </div>
-
 
     <div class="home-rooms-container">
         <div class="home-create-room">
@@ -44,38 +28,12 @@
         </div>
 
         <div>
-            {% for room in rooms %}
-            <div>
-                <span>@{{room.host.username}}</span>
-
-                {% if request.user == room.host %}
-                <small><a href=" {% url 'update-room' room.id %}  ">Edit</a></small>
-                <small>
-                    <a href="delete-room/{{room.id}}">Delete</a>
-                </small>
-                {% endif %}
-                <h3>{{room.id}} --- <a href="room/{{room.id}}">{{room.name}}</a> </h3>
-                <p>{{room.description}}</p>
-                <small>{{room.topic.name}}</small>
-                <hr>
-            </div>
-            {% endfor %}       
+            {% include 'base/feed_component.html' %}
         </div>
     </div>  
     
     <div class="activity-container">
-        <h2>Recent activities</h2>
-        {% for act in activity_feed  %}
-        <div class="activity-user">
-            <small>{{act.created|timesince}}</small>
-            <br>
-            <small>@{{act.user}}</small>
-            <p>replied to post "{{act.room}}"</p>
-            <br>
-            <p>{{act.body}}</p>
-            <hr>
-        </div>
-        {% endfor %}
+        {% include 'base/activity_feed_component.html' %}   
     </div>
 </div>
 
