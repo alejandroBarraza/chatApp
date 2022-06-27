@@ -22,7 +22,9 @@ urlpatterns = [
 
 
     #Message url
-    path('message/delete/<str:pk>/',views.delete_message, name='delete-message')
+    path('message/delete/<str:pk>/',views.delete_message, name='delete-message'),
 
+    #User url
+    path('profile/<str:pk>/', views.profile, name = 'profile')
 
 ]
