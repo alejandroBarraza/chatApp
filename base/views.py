@@ -60,12 +60,10 @@ def loginPage(request):
         
         
         # if user exist , veryfried credentials
-
         user = authenticate(request, username = username, password = password)
 
         if user:
             login(request, user)
-            print(request.POST)
             return redirect('home')
         else:
             messages.error(request , "Username or Password does not exist" )
@@ -78,6 +76,21 @@ def loginPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('home')
+
+def profile(request,pk):
+    
+    user = User.objects.get(pk = pk)
+    topics = Topic.objects.all()
+    #rooms that the user create.
+    rooms = user.room_set.all()
+    activity_feed = user.message_set.all().order_by('-created')[:5]
+    context = {
+        'user': user,
+        'topics': topics,
+        'rooms': rooms,
+        'activity_feed' : activity_feed
+    }
+    return render(request,'base/user_profile.html',context)
 
 def home(request):
 
@@ -97,11 +110,9 @@ def home(request):
     # get many rooms available from last query instance(room)
     room_count = rooms.count() 
 
-
     #get activity feed.
-    activity_feed = Message.objects.all().order_by('-created')[:5]
-    print(activity_feed)
-
+    # activity_feed = Message.objects.all().order_by('-created')[:5]
+    activity_feed = Message.objects.filter(room__topic__name__icontains = q)
 
     context = {
         'rooms': rooms,
