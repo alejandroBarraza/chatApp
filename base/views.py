@@ -1,3 +1,4 @@
+
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
@@ -93,6 +94,7 @@ def profile(request,pk):
     return render(request,'base/user_profile.html',context)
 
 def home(request):
+   
 
     # get the query parameter from the url 
     # Q allos to make custom queryies with 'and' or 'or'
@@ -155,7 +157,9 @@ def create_room(request):
         form = FormRoom(request.POST)
         if form.is_valid():
             # work with the data
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             # save to db
 
             # redirect to the home page after send 
