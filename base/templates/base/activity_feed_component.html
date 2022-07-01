@@ -1,23 +1,38 @@
-<h2>Recent activities</h2>
-{% for act in activity_feed  %}
-<div class="activity-user">
-    <small>{{act.created|timesince}}</small>
-    <br>
-    <a href="{% url 'profile' act.user.id %}">@{{act.user}}</a>
-    <p>replied to post "{{act.room}}"</p>
-    <br>
-    <p>{{act.body}}</p>
-    {% if request.user == act.user %}
-    <div class="comment-form">
-        <form method="POST" actions="">
-            {% csrf_token %}
-            <button>
-                <a href="{% url 'delete-message' act.id %}">Delete</a>
-            </button>
-        </form>
+<div class="activities">
+    <div class="activities__header">
+      <h2>Recent Activities</h2>
     </div>
-    <hr>
-    {% endif %}
-
+    {% for act in activity_feed  %}
+    <div class="activities__box">
+      <div class="activities__boxHeader roomListRoom__header">
+        <a href="{% url 'profile' act.user.id %}" class="roomListRoom__author">
+          <div class="avatar avatar--small">
+            <img src="https://randomuser.me/api/portraits/women/11.jpg" />
+          </div>
+          <p>
+            @{{act.user}}
+            <span>{{act.created|timesince}} ago</span>
+          </p>
+        </a>
+        <div class="roomListRoom__actions">
+            {% if request.user == act.user %}
+            <a href="{% url 'delete-message' act.id %}">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <title>remove</title>
+                <path
+                    d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"
+                ></path>
+                </svg>
+            </a>
+            {% endif %}
+        </div>
+      </div>
+      <div class="activities__boxContent">
+        <p>replied to post “<a href="{% url 'room' act.room.id %}">{{act.room.topic}}</a>”</p>
+        <div class="activities__boxRoomContent">
+          {{act.body}}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
