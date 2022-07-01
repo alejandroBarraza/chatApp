@@ -9,7 +9,7 @@ class Topic(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self) -> str:
-        return f"Room topic: {self.name}"
+        return self.name
 
 
 class Room(models.Model):
@@ -27,7 +27,7 @@ class Room(models.Model):
 
     # str generator
     def __str__(self) -> str:
-        return f"Name room created: {self.name}"
+        return self.name
     
     
 class Message(models.Model):
@@ -38,4 +38,4 @@ class Message(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f"Current Message: {self.body[0:50]}"
+        return self.body[0:50]
