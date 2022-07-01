@@ -25,6 +25,7 @@ urlpatterns = [
     path('message/delete/<str:pk>/',views.delete_message, name='delete-message'),
 
     #User url
-    path('profile/<str:pk>/', views.profile, name = 'profile')
+    path('profile/<str:pk>/', views.profile, name = 'profile'),
+    path('profile/edit/<str:username>/', views.edit_profile, name = 'edit-profile')
 
 ]
