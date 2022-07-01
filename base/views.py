@@ -1,4 +1,3 @@
-
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
@@ -93,6 +92,11 @@ def profile(request,pk):
     }
     return render(request,'base/user_profile.html',context)
 
+def edit_profile(request,username):
+    context = {}
+    return render(request,'base/edit-profile.html', context)
+
+
 def home(request):
    
 
@@ -112,6 +116,7 @@ def home(request):
     # get many rooms available from last query instance(room)
     room_count = rooms.count() 
 
+   
     #get activity feed.
     # activity_feed = Message.objects.all().order_by('-created')[:5]
     activity_feed = Message.objects.filter(room__topic__name__icontains = q)
