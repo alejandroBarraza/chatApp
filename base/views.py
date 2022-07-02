@@ -154,7 +154,7 @@ def room(request,id):
      }
     return render(request,'base/room.html', context)
 
-@login_required(login_url='login')
+# @login_required(login_url='login')
 def create_room(request):
 
     # if a post request with the data from the form.
