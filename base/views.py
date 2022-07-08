@@ -1,3 +1,5 @@
+from unicodedata import name
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
@@ -71,7 +73,7 @@ def loginPage(request):
 
     
     context = { "page" : page}
-    return render(request,'base/login_page.html',context)
+    return render(request,'base/login_page_old.html',context)
 
 def logoutUser(request):
     logout(request)
@@ -154,25 +156,32 @@ def room(request,id):
      }
     return render(request,'base/room.html', context)
 
-# @login_required(login_url='login')
+@login_required(login_url='login')
 def create_room(request):
 
     # if a post request with the data from the form.
-    if request.method == 'POST':
-        form = FormRoom(request.POST)
-        if form.is_valid():
-            # work with the data
-            room = form.save(commit=False)
-            room.host = request.user
-            room.save()
-            # save to db
+    topics = Topic.objects.all()
+    form = FormRoom()
 
-            # redirect to the home page after send 
-            return redirect('/')
+    if request.method == 'POST':
+        topic = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name = topic)
+        
+        Room.objects.create(
+            host = request.user,
+            topic = topic,
+            name = request.POST.get('name'),
+            description = request.POST.get('description')
+        )
+        return redirect('home')
+
     else:
-        form = FormRoom()
-    
-    return render(request,'base/room_form.html',{'form':form})
+        context = {
+            'topics': topics,
+            'form': form
+        }
+        
+    return render(request,'base/room_form.html', context)
 
 
 # update a room view form 
@@ -180,17 +189,26 @@ def create_room(request):
 def update_room(request,pk):
     # pk = room that we will update 
     room = Room.objects.get(id = pk)
+    topics = Topic.objects.all()
+
+    if request.user != room.host:
+        return HttpResponse("Your are not allowed to edit this room.")
 
     if request.method == 'POST':
-        form = FormRoom(request.POST, instance=room)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
+        topic = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name = topic)
+        room.topic = topic
+        room.name = request.POST.get('name')
+        room.description = request.POST.get('description') 
+        room.save()
+        return redirect('home')
+
     else:
         # get a instance of the form from the room to update.
-        form = FormRoom(instance=room)      
+        form = FormRoom(instance=room)    
 
-    return render(request,'base/room_form.html',{'form':form})
+
+    return render(request,'base/room_form.html',{'form':form,'topics':topics,'room':room})
 
 @login_required(login_url='login')
 def delete_room(request,pk):
