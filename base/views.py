@@ -1,3 +1,4 @@
+import email
 from unicodedata import name
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -10,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 # Create your views here.
 from django.contrib.auth.models import User
 from .models import Room, Topic, Message
-from .forms import FormRoom
+from .forms import FormRoom, FormUser
 
 def register_page(request):
     
@@ -68,12 +69,12 @@ def loginPage(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request , "Username or Password does not exist" )
+            messages.error(request , "Email or Password does not exist" )
 
 
     
     context = { "page" : page}
-    return render(request,'base/login_page_old.html',context)
+    return render(request,'base/login_page.html',context)
 
 def logoutUser(request):
     logout(request)
@@ -94,8 +95,28 @@ def profile(request,pk):
     }
     return render(request,'base/user_profile.html',context)
 
+@login_required(login_url='login')
 def edit_profile(request,username):
-    context = {}
+
+    user = request.user
+    if user.username != username:
+        return HttpResponse("Your are not allowd to edit this user.")
+
+    if request.method == "POST":
+        form = FormUser(request.POST, instance = user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', pk = user.id)
+        
+
+    else:
+        form = FormUser(instance = user)
+        context = {
+            'user':user,
+            'form':form
+        }
+        
+
     return render(request,'base/edit-profile.html', context)
 
 
@@ -161,7 +182,6 @@ def create_room(request):
 
     # if a post request with the data from the form.
     topics = Topic.objects.all()
-    form = FormRoom()
 
     if request.method == 'POST':
         topic = request.POST.get('topic')
@@ -176,6 +196,7 @@ def create_room(request):
         return redirect('home')
 
     else:
+        form = FormRoom()
         context = {
             'topics': topics,
             'form': form
@@ -218,7 +239,7 @@ def delete_room(request,pk):
         room.delete()
         return redirect('home')
     else:
-        return render(request,'base/room_delete.html', {'obj': room} )
+        return render(request,'base/delete.html', {'obj': room} )
 
 
 
@@ -231,7 +252,7 @@ def delete_message(request,pk):
         return redirect('home')
 
     else:
-        return render(request,'base/room_delete.html', {'obj': message} ) 
+        return render(request,'base/delete.html', {'obj': message} ) 
     
 
 
