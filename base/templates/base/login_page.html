@@ -16,15 +16,15 @@
 
         <form class="form" action="" method="POST">
           {% csrf_token %}
-          <div class="form__group form__group">
-            <label for="room_name">Email</label>
-            <input id="username" name="email" type="email" placeholder="e.g. ale@email.com />
-          </div>
-          <div class=" form__group">
-            <label for="password">Password</label>
-            <input id="password" name="password" type="password"
-              placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
-          </div>
+            <div class="form__group">
+              <label for="uername">Username</label>
+              <input id="username" name="username" type="text" placeholder="ale10" />
+            </div>
+            <div class=" form__group">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password"
+                placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+            </div>
 
           <button class="btn btn--main" type="submit">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -63,7 +63,7 @@
           {% csrf_token %}
 
           {% for field in form %}
-          <div class="form__group form__group">
+          <div class="form__group">
             <label for="room_name">{{field.label}}</label>
             {{field}}
           </div>
@@ -86,8 +86,8 @@
         </form>
 
         <div class="auth__action">
-          <p>Already signed up yet?</p>
-          <a href="{% url 'login' %}" class="btn btn--link">Sign Up</a>
+          <p>Already signed up?</p>
+          <a href="{% url 'login' %}" class="btn btn--link">Log in</a>
         </div>
       </div>
     </div>
