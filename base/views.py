@@ -1,5 +1,3 @@
-import email
-from unicodedata import name
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
@@ -134,7 +132,7 @@ def home(request):
         Q(host__username__contains = q)
 
     )
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
 
     # get many rooms available from last query instance(room)
     room_count = rooms.count() 
@@ -255,6 +253,18 @@ def delete_message(request,pk):
         return render(request,'base/delete.html', {'obj': message} ) 
     
 
+# Mobile
+def mobile_topics(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics = Topic.objects.filter( name__icontains = q)
+    context = {'topics':topics}
+    return render(request,'base/topics.html',context)
+ 
+
+def mobile_activity(request):
+    
+    room_messages = Message.objects.all()[0:5]
+    return render(request, 'base/activity.html', {'room_messages': room_messages})
 
 
 

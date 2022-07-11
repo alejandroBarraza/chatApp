@@ -26,6 +26,10 @@ urlpatterns = [
 
     #User url
     path('profile/<str:pk>/', views.profile, name = 'profile'),
-    path('profile/edit/<str:username>/', views.edit_profile, name = 'edit-profile')
+    path('profile/edit/<str:username>/', views.edit_profile, name = 'edit-profile'),
+
+    #Mobile view url
+    path('mobile/topics/', views.mobile_topics, name='mobile-topics'),
+    path('mobile/activity/', views.mobile_activity, name='mobile-activity')   
 
 ]
