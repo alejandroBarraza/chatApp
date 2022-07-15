@@ -263,7 +263,7 @@ def mobile_topics(request):
 
 def mobile_activity(request):
     
-    room_messages = Message.objects.all()[0:5]
+    room_messages = Message.objects.all()[0:4]
     return render(request, 'base/activity.html', {'room_messages': room_messages})
 
 
