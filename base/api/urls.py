@@ -5,5 +5,6 @@ from . import views
 # base url from api: api/
 urlpatterns = [
     path('', views.get_routes),
-    path('rooms/', views.get_rooms)
+    path('rooms/', views.get_rooms),
+    path('rooms/<str:pk>', views.get_room)
 ]
