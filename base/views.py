@@ -1,20 +1,22 @@
+import email
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-from django.contrib.auth.models import User
-from .models import Room, Topic, Message
+# from django.contrib.auth.models import User
+from .models import Room, Topic, Message, User
 from .forms import FormRoom, FormUser
 
 def register_page(request):
     
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             # get the user before save for update fields(lowerCase).
             user = form.save(commit=False)
@@ -27,9 +29,9 @@ def register_page(request):
                 NO need it for check if user already exist, Django handdle it in User Model
                 with error : " A user with that username already exists "
             """
-    
+     
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
 
     context = { "form": form}
     return render(request,'base/login_page.html',context)
@@ -47,21 +49,21 @@ def loginPage(request):
     # get the values after submit the form.
     # username and password
     if request.method == 'POST':
-        username = request.POST.get('username').lower()
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
         # check if user exist, if not , return a message " user does not exist "
         try:
-            user = User.objects.get(username = username)
+            user = User.objects.get(email = email)
 
         except:
-            messages.error(request, "User does not exist")
+            messages.error(request, "Email  does not exist")
             return redirect('login')
         
         
         
         # if user exist , veryfried credentials
-        user = authenticate(request, username = username, password = password)
+        user = authenticate(request, email = email, password = password)
 
         if user:
             login(request, user)
@@ -101,7 +103,7 @@ def edit_profile(request,username):
         return HttpResponse("Your are not allowd to edit this user.")
 
     if request.method == "POST":
-        form = FormUser(request.POST, instance = user)
+        form = FormUser(request.POST, request.FILES, instance = user)
         if form.is_valid():
             form.save()
             return redirect('profile', pk = user.id)
@@ -185,12 +187,15 @@ def create_room(request):
         topic = request.POST.get('topic')
         topic, created = Topic.objects.get_or_create(name = topic)
         
-        Room.objects.create(
+        room = Room.objects.create(
             host = request.user,
             topic = topic,
             name = request.POST.get('name'),
             description = request.POST.get('description')
         )
+
+        room.participants.add(request.user)
+
         return redirect('home')
 
     else:
