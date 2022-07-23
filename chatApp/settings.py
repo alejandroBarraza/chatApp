@@ -16,7 +16,7 @@ import cloudinary.uploader
 import cloudinary.api
 import environ
 import django_heroku
-
+import os
 # Initialise environment variables
 env = environ.Env()
 environ.Env.read_env()
@@ -133,19 +133,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
-STATIC_URL = 'static/'
+
+# MEDIA_ROOT = BASE_DIR / 'static/images/'
 MEDIA_URL = '/images/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
-
-# only for development enviroment.
-MEDIA_ROOT = BASE_DIR / 'static/images/'
-
-STATIC_ROOT = '/home/username/projects/site/assets/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
