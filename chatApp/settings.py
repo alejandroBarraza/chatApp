@@ -10,13 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from operator import ge
 from pathlib import Path
-from webbrowser import get
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import environ
+import os
 
 
 # Initialise environment variables
@@ -145,6 +144,8 @@ STATICFILES_DIRS = [
 
 # only for development enviroment.
 MEDIA_ROOT = BASE_DIR / 'static/images/'
+
+STATIC_ROOT = '/home/username/projects/site/assets/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
