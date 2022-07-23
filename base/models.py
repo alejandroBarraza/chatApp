@@ -1,14 +1,14 @@
-from contextlib import nullcontext
-from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class User(AbstractUser):
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(unique=True, null=False)
     bio = models.TextField(null= True)
-    avatar = models.ImageField(null = True, default= 'avatar.svg')
+    # avatar = models.ImageField(null = True, default= 'avatar.svg')
+    avatar = CloudinaryField('image',default= 'avatar.svg')
 
     def __str__(self) -> str:
         return self.name

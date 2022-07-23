@@ -10,7 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from operator import ge
 from pathlib import Path
+from webbrowser import get
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import environ
+
+
+# Initialise environment variables
+env = environ.Env()
+environ.Env.read_env()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +51,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base.apps.BaseConfig',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'cloudinary'
 ]
 
 AUTH_USER_MODEL = 'base.User'
@@ -139,3 +152,11 @@ MEDIA_ROOT = BASE_DIR / 'static/images/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGINS: True
+
+
+# Cloudinary config.
+cloudinary.config(
+    cloud_name = env('cloud_name'),
+    api_key = env('api_key'),
+    api_secret = env('api_secret')
+)
