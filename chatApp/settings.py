@@ -15,8 +15,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import environ
-import os
-
+import django_heroku
 
 # Initialise environment variables
 env = environ.Env()
@@ -161,3 +160,6 @@ cloudinary.config(
     api_key = env('api_key'),
     api_secret = env('api_secret')
 )
+
+#Activate Django-Heroku
+django_heroku.settings(locals())
